@@ -105,8 +105,8 @@ if (rawValues)
 	//AQUI INTRODUZO OS DADOS PARA O BUCKET
 	 
 	payload.push({ "variable": "IMEI", "value": IMEI});
-	payload.push({ "variable": "0-1V", "value": ZeroumV, "unit": "V", "time": TIMESTAMP_aux});
-	payload.push({ "variable": "0-10V", "value": ZerodezV, "unit": "V", "time": TIMESTAMP_aux});
+	payload.push({ "variable": "Zero1V", "value": ZeroumV, "unit": "V", "time": TIMESTAMP_aux});
+	payload.push({ "variable": "Zero10V", "value": ZerodezV, "unit": "V", "time": TIMESTAMP_aux});
 	payload.push({ "variable": "SN", "value": SN});
 	payload.push({ "variable": "TAG", "value": TAG, "location": {"lat": latitude, "lng": longitude}});  
 	payload.push({ "variable": "Temperatura", "value": TEMPERATURA, "unit": "°C", "time": TIMESTAMP_aux});
