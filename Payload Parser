@@ -1,0 +1,131 @@
+
+const rawValues = payload.find(item => item.variable === 'payload'); //LOCALIZANDO O PAYLOAD(DADOS)
+
+
+if (rawValues)
+{
+	const valuesString = rawValues.value;
+	const splitValues = valuesString.split(";"); //SEPARANDO TODO O DADO ATRAVÉS DO ";". ASSIM CONSIGO SEPARAR TODOS E FILTRA-LOS.
+
+	//FAZENDO O FILTRO DOS DADOS DE ACORDO COM SUA POSIÇÃO
+	const filterIMEI = splitValues[1];
+	const filter01V = splitValues[2];
+	const filter010V = splitValues[3];
+	const filterSN = splitValues[25];
+	const filterTAG = splitValues[24];
+	const filterBAT = splitValues[9];
+	const filterTEMP = splitValues[10];
+	const filterUMID = splitValues[11];
+	const filterPACOTE = splitValues[18];
+	const filterIZero = splitValues[4];
+	const filterIUm = splitValues[5];
+	const filterIntZero = splitValues[6];
+	const filterIntUm = splitValues[7];
+	const filterIntDois = splitValues[8];
+	const filterEixoX = splitValues[12];
+	const filterEixoY = splitValues[13];
+	const filterEixoZ = splitValues[14];
+	const filterCSQ = splitValues[20];
+	const filterRSSI = splitValues[21];
+	const filterOperadora = splitValues[23];
+	const filterData = splitValues[16];
+	const filterHora = splitValues[17];
+
+
+	/* AQUI PASSO OUTRO FILTRO PARA SEPARAR O VALOR DO NOME. EX.: TEMPERATURA:29.54 
+	ENTÃO ATRAVÉS DOS ":" PEGO SOMENTE O VALOR DE 29.54 E DESCARTO A STRING TEMPERATURA*/
+
+	const IMEIValues = filterIMEI.split(":");
+	const ZeroumValues = filter01V.split(":");
+	const ZerodezValues = filter010V.split(":");
+	const SNValues = filterSN.split(":");
+	const TAGValues = filterTAG.split(":");
+	const BATValues = filterBAT.split(":");
+	const TEMPValues = filterTEMP.split(":");
+	const UMIDValues = filterUMID.split(":");
+	const PACOTEValues = filterPACOTE.split(":");
+	const IZeroValues = filterIZero.split(":");
+	const IUmValues = filterIUm.split(":");
+	const IntZeroValues = filterIntZero.split(":");
+	const IntUmValues = filterIntUm.split(":");
+	const IntDoisValues = filterIntDois.split(":");
+	const EixoXValues = filterEixoX.split(":");
+	const EixoYValues = filterEixoY.split(":");
+	const EixoZValues = filterEixoZ.split(":");
+	const CSQValues = filterCSQ.split(":");
+	const RSSIValues = filterRSSI.split(":");
+	const OperadoreValues = filterOperadora.split(":");
+	const DataValues = filterData.split(":");
+		
+	// FEITO A SEPARAÇÃO AGORA PEGO SOMENTE O DADO COMO EXPLICADO ACIMA, SOMENTE NA HORA QUE NÃO DA CERTO POIS JÁ TEM :, AÍ FILTREI POR STRING
+	// NECESSÁRIO TAMBÉM FAZER A CRIAÇÃO DA VARIAVEL TIMESTAMP PARA O GRAFICO FUNCIONAR CORRETAMENTE E PEGAR A HORA CORRETAMENTE.
+
+	const IMEI = IMEIValues[1];
+	const ZeroumV = ZeroumValues[1];
+	const ZerodezV = ZerodezValues[1];
+	const SN = SNValues[1];
+	const TAG = TAGValues[1];
+	const BATERIA = BATValues[1];
+	const TEMPERATURA = TEMPValues[1];
+	const UMIDADE = UMIDValues[1];
+	const PACOTE = PACOTEValues[1];
+	const IZero = IZeroValues[1];
+	const IUm = IUmValues[1];
+	const IntZero = IntZeroValues[1];
+	const IntUm = IntUmValues[1];
+	const IntDois = IntDoisValues[1];
+	const EixoX = EixoXValues[1];
+	const EixoY = EixoYValues[1];
+	const EixoZ = EixoZValues[1];
+	const CSQ = CSQValues[1];
+	const RSSI = RSSIValues[1];
+	const Operadora = OperadoreValues[1];
+	const DATA = DataValues[1];	
+	const HORA = filterHora.substring(5,13);
+	const TIMESTAMP_aux = DATA+ " " + HORA + ".000";
+
+	//conversões
+	let I_0 = ((15*IZero)/16) - (15/4);
+	let I_1 = ((15*IUm)/16) - (15/4);
+
+	if(I_1 < 0){
+		I_1 = 0;
+	};
+
+	if(I_0 < 0){
+		I_0 = 0;
+	};
+	
+	const lat = device.params.find((x) => x.key === 'lat');
+	const long = device.params.find((y) => y.key === 'lng');
+	
+	const latitude = Number(lat.value);
+	const longitude = Number(long.value);
+
+	//AQUI INTRODUZO OS DADOS PARA O BUCKET
+	 
+	payload.push({ "variable": "IMEI", "value": IMEI});
+	payload.push({ "variable": "0-1V", "value": ZeroumV, "unit": "V", "time": TIMESTAMP_aux});
+	payload.push({ "variable": "0-10V", "value": ZerodezV, "unit": "V", "time": TIMESTAMP_aux});
+	payload.push({ "variable": "SN", "value": SN});
+	payload.push({ "variable": "TAG", "value": TAG, "location": {"lat": latitude, "lng": longitude}});  
+	payload.push({ "variable": "Temperatura", "value": TEMPERATURA, "unit": "°C", "time": TIMESTAMP_aux});
+	payload.push({ "variable": "Bateria", "value": BATERIA, "unit": "V"});
+	payload.push({ "variable": "Pacote", "value": PACOTE});
+	payload.push({ "variable": "Umidade", "value": UMIDADE, "unit": "%UR", "time": TIMESTAMP_aux});
+	payload.push({ "variable": "I0", "value": I_0, "time": TIMESTAMP_aux, "unit": "MCA"});
+	payload.push({ "variable": "I1", "value": I_1, "time": TIMESTAMP_aux, "unit": "MCA"});
+	payload.push({ "variable": "INT0", "value": IntZero, "time": TIMESTAMP_aux});
+	payload.push({ "variable": "INT1", "value": IntUm, "time": TIMESTAMP_aux});
+	payload.push({ "variable": "INT2", "value": IntDois, "time": TIMESTAMP_aux});
+	payload.push({ "variable": "X", "value": EixoX, "time": TIMESTAMP_aux});
+	payload.push({ "variable": "Y", "value": EixoY, "time": TIMESTAMP_aux});
+	payload.push({ "variable": "Z", "value": EixoZ, "time": TIMESTAMP_aux});
+	payload.push({ "variable": "CSQ", "value": CSQ});
+	payload.push({ "variable": "RSSI", "value": RSSI});
+	payload.push({ "variable": "OPERADORA", "value": Operadora});		
+	payload.push({ "variable": "DATA", "value": DATA});
+	payload.push({ "variable": "HORA", "value": HORA,});
+	
+}
+
