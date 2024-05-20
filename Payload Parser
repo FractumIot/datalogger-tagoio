@@ -1,5 +1,5 @@
 
-const rawValues = payload.find(item => item.variable === 'payload'); //LOCALIZANDO O PAYLOAD(DADOS)
+const rawValues = payload.find((item) => item.variable === 'payload'); //LOCALIZANDO O PAYLOAD(DADOS)
 
 
 if (rawValues)
